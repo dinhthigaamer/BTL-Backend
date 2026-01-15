@@ -45,8 +45,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {
-                })
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -83,4 +82,28 @@ public class SecurityConfig {
             throws Exception {
         return configuration.getAuthenticationManager();
     }
+
+    @Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+
+    config.setAllowedOrigins(List.of(
+        "http://localhost:5173",
+        "https://btl-frontend-production.up.railway.app"
+    ));
+
+    config.setAllowedMethods(List.of(
+        "GET", "POST", "PUT", "DELETE", "OPTIONS"
+    ));
+
+    config.setAllowedHeaders(List.of("*"));
+    config.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source =
+            new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+
+    return source;
+}
+
 }
