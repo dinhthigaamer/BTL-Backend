@@ -2,11 +2,11 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
-COPY . .
+COPY pom.xml .
+RUN mvn -B -q dependency:go-offline
 
-RUN chmod +x mvnw
-RUN ./mvnw -B -DskipTests clean package -Pproduction
-
+COPY src ./src
+RUN mvn -B -DskipTests clean package -Pproduction
 
 # ---------- RUN ----------
 FROM eclipse-temurin:17-jre
